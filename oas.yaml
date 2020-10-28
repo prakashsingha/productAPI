@@ -1,0 +1,411 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/prakashsingha/inventoryAPI/1.0.0
+  - url: http://api.demo-dev.com/productAPI/v1
+    description: For internal development use
+  - url: https://api.demo-stag.com/productAPI/v1
+    description: For internal staging use
+info:
+  description: This is an inventory API
+  version: "1.0.0"
+  title: Inventory API
+  contact:
+    email: prakashsingha@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+
+paths:
+  /warehouses:
+    get:
+      summary: searches warehouse
+      operationId: searchWarehouse
+      description: |
+        By passing in the appropriate options, you can search for
+        available warehouses in the system
+      parameters:
+        - in: query
+          name: searchString
+          description: pass an optional search string for looking up warehouse
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: skip
+          description: number of records to skip for pagination
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+        - in: query
+          name: limit
+          description: maximum number of records to return
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 50
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WarehouseItem'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      summary: adds a warehouse item
+      operationId: addWarehouse
+      description: Adds a warehouse to the system
+      responses:
+        '201':
+          description: warehouse created
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: an existing warehouse already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WarehouseItem'
+        description: Warehouse details to add
+        
+  /warehouses/{id}:
+    get:
+      summary: Represents a warehouse
+      operationId: getWarehouse
+      description: |
+        This resource represents an warehouse in the system.
+        Each warehouse is identified by an `id`.
+      parameters:
+        - name: id
+          in: path
+          description: Warehouse ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+        
+      responses:
+        '200':
+          description: return result matching criteria
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/WarehouseItem'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Deletes a warehouse along with its items
+      operationId: deleteWarehouse
+      description: |
+        This resource represents an warehouse in the system.
+        Each warehouse is identified by an `id`.
+      parameters:
+        - name: id
+          in: path
+          description: Warehouse ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+        
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  
+  /products:
+    get:
+      summary: searches product
+      operationId: searchProduct
+      description: |
+        By passing in the appropriate options, you can search for
+        available products in the system
+      parameters:
+        - in: query
+          name: searchString
+          description: pass an optional search string for looking up products
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: skip
+          description: number of records to skip for pagination
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+        - in: query
+          name: limit
+          description: maximum number of records to return
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 50
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductItem'
+        '400':
+          description: bad input parameter
+    post:
+      summary: adds a product item
+      operationId: addProduct
+      description: Adds a product to the system
+      responses:
+        '201':
+          description: product created
+        '400':
+          description: 'invalid input, object invalid'
+        '409':
+          description: an existing product already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductItem'
+        description: Product details to add
+        
+  /products/{id}:
+    get:
+      summary: Represents a product
+      operationId: getProduct
+      description: |
+        This resource represents an product in the system.
+        Each product is identified by an `id`.
+      parameters:
+        - name: id
+          in: path
+          description: Product ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+        
+      responses:
+        '200':
+          description: return result matching criteria
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/ProductItem'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Deletes a product along with its items
+      operationId: deleteProduct
+      description: |
+        This resource represents an product in the system.
+        Each product is identified by an `id`.
+      parameters:
+        - name: id
+          in: path
+          description: Product ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+        
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: A warehouse with the specified ID was not found.
+    patch:
+      summary: Updates a product fields
+      operationId: updateProduct
+      description: |
+        This resource represents an product in the system.
+        Each product is identified by an `id`.
+      parameters:
+        - name: id
+          in: path
+          description: Product ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: product data in json format
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+        required: true
+        
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: A warehouse with the specified ID was not found.
+
+components:
+  responses:
+      NotFound:
+        description: The specified resource was not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Error'
+      Unauthorized:
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Error'
+            
+  schemas:
+    # Schema for error response body
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message
+        
+    WarehouseItem:
+      type: object
+      required:
+        - id
+        - name
+        - location
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          type: string
+          example: Warehouse 1
+        location:
+          type: string
+          example: SS14, Petaling Jaya
+        createdAt:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+    ProductItem:
+      type: object
+      required:
+        - id
+        - name
+        - costPrice
+        - sellingPrice
+        - warehouseId
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          type: string
+          example: Product 1
+        costPrice:
+          type: number
+          format: float
+          example: 55.10
+        sellingPrice:
+          type: number
+          format: float
+          example: 60.00
+        quantity:
+          type: integer
+          example: 100
+        warehouseId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+    UserItem:
+      type: object
+      required:
+        - id
+        - username
+        - password
+        - lastLogin
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        username:
+          type: string
+          example: user1
+        password:
+          type: string
+          example: password123
+        lastLogin:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        createdAt:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
