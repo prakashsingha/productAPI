@@ -1,14 +1,17 @@
 const express = require('express');
 
 const userController = require('../controllers/userController');
-const auth = require('../middlewares/auth')();
+const authMiddleware = require('../middlewares/auth');
 
-function routes(User) {
+function routes(User, TokenBlackList) {
   const userRouter = express.Router();
-  const controller = userController(User);
+  const controller = userController(User, TokenBlackList);
+  const auth = authMiddleware();
 
   userRouter.route('/users/login').post(controller.login);
   userRouter.route('/users/register').post(controller.addUser);
+
+  userRouter.route('/users/logout').post(controller.logout);
 
   userRouter.use('/users/:id', [
     controller.getUserMiddleware,

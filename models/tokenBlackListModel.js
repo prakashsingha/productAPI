@@ -2,14 +2,12 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const userModel = new Schema(
+const tokenBlackListModel = new Schema(
   {
     username: String,
-    password: String,
-    name: String,
-    email: String
+    token: String
   },
   { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } }
 );
 
-module.exports = mongoose.model('User', userModel);
+module.exports = mongoose.model('TokenBlackList', tokenBlackListModel);

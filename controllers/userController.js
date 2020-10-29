@@ -4,10 +4,14 @@ const jwt = require('jsonwebtoken');
 
 const helper = require('./helper')();
 
-function userController(User) {
+function userController(User, TokenBlackList) {
   async function getUserByUsername(username) {
     const user = await User.findOne({ username });
     return user;
+  }
+
+  function getUsernameFromToken(token) {
+    return jwt.decode(token).sub;
   }
 
   function searchUser(req, res) {
@@ -62,7 +66,7 @@ function userController(User) {
     const user = await User.findOne({ username });
 
     if (!user) {
-      return helper.sendError(res, 404, 'username not found');
+      return helper.sendError(res, 404, 'user not found');
     }
     const isAuthenticated = await helper.comparePassword(
       password,
@@ -75,6 +79,19 @@ function userController(User) {
 
     const token = await generateToken(null, user.username);
     return res.status(200).json({ username, token });
+  }
+
+  async function logout(req, res) {
+    const token = req.headers.authorization.split(' ')[1];
+    const username = getUsernameFromToken(token);
+
+    const blackListedToken = new TokenBlackList({ username, token });
+    blackListedToken.save((err) => {
+      if (err) {
+        return helper.sendError(res, 500, err);
+      }
+      return res.status(200).json({ message: 'Successfully logged out.' });
+    });
   }
 
   function getUserMiddleware(req, res, next) {
@@ -95,6 +112,7 @@ function userController(User) {
     addUser,
     deleteUser,
     login,
+    logout,
     getUserMiddleware
   };
 }

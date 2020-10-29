@@ -13,4 +13,4 @@ const productModel = new Schema(
   { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } }
 );
 
-module.exports = mongoose.model('product', productModel);
+module.exports = mongoose.model('Product', productModel);
