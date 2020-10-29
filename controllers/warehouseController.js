@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-const helper = require('./helper');
+const helper = require('./helper')();
 
 function warehouseController(Warehouse) {
   function searchWarehouse(req, res) {
@@ -30,7 +30,7 @@ function warehouseController(Warehouse) {
     });
   }
 
-  function getBookMiddleware(req, res, next) {
+  function getWarehouseMiddleware(req, res, next) {
     Warehouse.findById(req.params.id, (err, warehouse) => {
       if (err) {
         helper.sendError(res, 500, err);
@@ -47,7 +47,7 @@ function warehouseController(Warehouse) {
     searchWarehouse,
     addWarehouse,
     deleteWarehouse,
-    getBookMiddleware
+    getWarehouseMiddleware
   };
 }
 

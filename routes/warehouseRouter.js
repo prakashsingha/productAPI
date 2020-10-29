@@ -6,7 +6,7 @@ function routes(Warehouse) {
   const warehouseRouter = express.Router();
   const controller = warehouseController(Warehouse);
 
-  warehouseRouter.use('/warehouses/:id', controller.getBookMiddleware);
+  warehouseRouter.use('/warehouses/:id', controller.getWarehouseMiddleware);
 
   warehouseRouter
     .route('/warehouses/:id')

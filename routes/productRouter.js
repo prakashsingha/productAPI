@@ -6,7 +6,7 @@ function routes(Product) {
   const productRouter = express.Router();
   const controller = productController(Product);
 
-  productRouter.use('/products/:id', controller.getBookMiddleware);
+  productRouter.use('/products/:id', controller.getProductMiddleware);
 
   productRouter
     .route('/products/:id')

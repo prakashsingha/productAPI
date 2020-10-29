@@ -50,7 +50,7 @@ function productController(Product) {
     });
   }
 
-  function getBookMiddleware(req, res, next) {
+  function getProductMiddleware(req, res, next) {
     Product.findById(req.params.id, (err, product) => {
       if (err) {
         return res.status(500).send(err);
@@ -68,7 +68,7 @@ function productController(Product) {
     addProduct,
     deleteProduct,
     updateProduct,
-    getBookMiddleware
+    getProductMiddleware
   };
 }
 
