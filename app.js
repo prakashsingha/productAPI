@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-// const cors = require('cors');
+const cors = require('cors');
 require('dotenv').config();
 
 // Models
@@ -25,7 +25,7 @@ const port = process.env.PORT || 3000;
 // middlewares
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-// app.use(cors);
+app.use(cors());
 
 // Register routers
 const apiVersion = 'v1';
