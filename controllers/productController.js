@@ -15,7 +15,7 @@ function productController(Product) {
     const product = new Product(req.body);
     product.save((err) => {
       if (err) {
-        helper.sendError(res, 500, err);
+        return helper.sendError(res, 500, err);
       }
       return res.status(201).json(product);
     });
@@ -24,7 +24,7 @@ function productController(Product) {
   function deleteProduct(req, res) {
     req.product.remove((err) => {
       if (err) {
-        helper.sendError(res, 500, err);
+        return helper.sendError(res, 500, err);
       }
       return res.sendStatus(204);
     });
@@ -43,7 +43,7 @@ function productController(Product) {
 
       product.save((err) => {
         if (err) {
-          helper.sendError(res, 500, err);
+          return helper.sendError(res, 500, err);
         }
         return res.status(200).json(product);
       });
