@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const saltRounds = 10;
 
@@ -22,10 +23,20 @@ function helper() {
       .catch((err) => console.error(err.message));
   }
 
+  function getUsernameFromToken(token) {
+    return jwt.decode(token).sub;
+  }
+
+  function getAudienceFromToken(token) {
+    return jwt.decode(token).aud;
+  }
+
   return {
     sendError,
     hashPassword,
-    comparePassword
+    comparePassword,
+    getUsernameFromToken,
+    getAudienceFromToken
   };
 }
 
