@@ -31,8 +31,8 @@ function userController(User) {
       if (err) {
         return helper.sendError(res, 500, err);
       }
+      return res.status(201).json(user);
     });
-    return res.status(201).json(user);
   }
 
   function deleteUser(req, res) {
