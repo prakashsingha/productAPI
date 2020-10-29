@@ -1,9 +1,15 @@
+/* eslint-disable consistent-return */
 /* eslint-disable no-unused-vars */
 const jwt = require('jsonwebtoken');
 
 const helper = require('./helper')();
 
 function userController(User) {
+  async function getUserByUsername(username) {
+    const user = await User.findOne({ username });
+    return user;
+  }
+
   function searchUser(req, res) {
     User.find((err, users) => {
       if (err) {
@@ -15,13 +21,18 @@ function userController(User) {
 
   async function addUser(req, res) {
     const user = new User(req.body);
+    const existingUser = await getUserByUsername(user.username);
+
+    if (existingUser) {
+      return helper.sendError(res, 409, 'username already exists');
+    }
     user.password = await helper.hashPassword(user.password);
     user.save((err) => {
       if (err) {
         return helper.sendError(res, 500, err);
       }
-      return res.status(201).json(user);
     });
+    return res.status(201).json(user);
   }
 
   function deleteUser(req, res) {
@@ -44,15 +55,6 @@ function userController(User) {
       audience: []
     };
     return jwt.sign({}, process.env.SECRET, options);
-  }
-
-  async function getUserByUsername(username) {
-    const user = await User.findOne({ username });
-
-    if (!user) {
-      return {};
-    }
-    return user;
   }
 
   async function login(req, res) {
