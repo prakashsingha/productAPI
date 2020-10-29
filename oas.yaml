@@ -25,6 +25,8 @@ paths:
       description: |
         By passing in the appropriate options, you can search for
         available warehouses in the system
+      security:
+        - bearerAuth: []
       parameters:
         - in: query
           name: searchString
@@ -64,9 +66,15 @@ paths:
       summary: adds a warehouse item
       operationId: addWarehouse
       description: Adds a warehouse to the system
+      security:
+        - bearerAuth: []
       responses:
         '201':
           description: warehouse created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseItem'
         '400':
           description: Bad request
           content:
@@ -85,16 +93,23 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WarehouseItem'
+              type: object
+              properties:
+                name:
+                  type: string
+                location:
+                  type: string
         description: Warehouse details to add
         
   /warehouses/{id}:
     get:
-      summary: Represents a warehouse
+      summary: Returns a warehouse
       operationId: getWarehouse
       description: |
         This resource represents an warehouse in the system.
         Each warehouse is identified by an `id`.
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -110,19 +125,19 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                items:
-                  $ref: '#/components/schemas/WarehouseItem'
+                $ref: '#/components/schemas/WarehouseItem'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
-      summary: Deletes a warehouse along with its items
+      summary: Deletes a warehouse
       operationId: deleteWarehouse
       description: |
         This resource represents an warehouse in the system.
         Each warehouse is identified by an `id`.
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -147,6 +162,8 @@ paths:
       description: |
         By passing in the appropriate options, you can search for
         available products in the system
+      security:
+        - bearerAuth: []
       parameters:
         - in: query
           name: searchString
@@ -184,27 +201,50 @@ paths:
       summary: adds a product item
       operationId: addProduct
       description: Adds a product to the system
+      security:
+        - bearerAuth: []
       responses:
         '201':
           description: product created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductItem'
         '400':
-          description: 'invalid input, object invalid'
+          description: invalid input, object invalid
         '409':
           description: an existing product already exists
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ProductItem'
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Product 1
+                costPrice:
+                  type: number
+                  format: float
+                  example: 140.05
+                sellingPrice:
+                  type: number
+                  format: float
+                  example: 150.90
+                warehouseId:
+                  type: string
+                  format: uuid
         description: Product details to add
         
   /products/{id}:
     get:
-      summary: Represents a product
+      summary: Returns a product
       operationId: getProduct
       description: |
-        This resource represents an product in the system.
+        This resource represents a product in the system.
         Each product is identified by an `id`.
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -220,19 +260,19 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                items:
-                  $ref: '#/components/schemas/ProductItem'
+                $ref: '#/components/schemas/ProductItem'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
-      summary: Deletes a product along with its items
+      summary: Deletes a product
       operationId: deleteProduct
       description: |
         This resource represents an product in the system.
         Each product is identified by an `id`.
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -250,11 +290,13 @@ paths:
         '404':
           description: A warehouse with the specified ID was not found.
     patch:
-      summary: Updates a product fields
+      summary: Updates a product fields like stock/unstock
       operationId: updateProduct
       description: |
         This resource represents an product in the system.
         Each product is identified by an `id`.
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -273,14 +315,88 @@ paths:
                 quantity:
                   type: integer
         required: true
-        
       responses:
         '204':
-          description: The resource was deleted successfully.
+          description: The resource was updated successfully.
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           description: A warehouse with the specified ID was not found.
+          
+  /users/register:
+    post:
+      summary: Creates a new user
+      operationId: addUser
+      description: Adds a user in the system
+      responses:
+        '201':
+          description: user created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserItem'
+        '400':
+          description: invalid input, object invalid
+        '409':
+          description: username already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: user-john
+                password:
+                  type: string
+                  example: a#923k9L3
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  format: email
+        description: User details to add
+        
+  /users/login:
+    post:
+      summary: Login successfully returns a token
+      operationId: login
+      description: Authenticates a user to the system
+      responses:
+        '200':
+          description: logged in and token generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    example: user-john
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MDM5NTU4MDQsImV4cCI6MTYwMzk1OTQwNCwiYXVkIjpbXSwiaXNzIjoiSU5WRU5UT1JZX0FQUCIsInN1YiI6InByYWthc2g0In0.H_XJTMVg9lYoZScH-SAb2j0CTtLMAPlaKrUU_ADdn_E
+        '400':
+          description: invalid input, object invalid
+        '409':
+          description: username already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: user-john
+                password:
+                  type: string
+                  example: a#923k9L3
+
+        description: user details to log in
+      
 
 components:
   responses:
@@ -296,14 +412,21 @@ components:
           application/json:
             schema:
               $ref: '#/components/schemas/Error'
-            
+  
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      
+      
   schemas:
     # Schema for error response body
     Error:
       type: object
       properties:
         code:
-          type: string
+          type: integer
         message:
           type: string
       required:
@@ -313,11 +436,8 @@ components:
     WarehouseItem:
       type: object
       required:
-        - id
         - name
         - location
-        - createdAt
-        - updatedAt
       properties:
         id:
           type: string
@@ -340,13 +460,10 @@ components:
     ProductItem:
       type: object
       required:
-        - id
         - name
         - costPrice
         - sellingPrice
         - warehouseId
-        - createdAt
-        - updatedAt
       properties:
         id:
           type: string
@@ -369,6 +486,7 @@ components:
         warehouseId:
           type: string
           format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
         createdAt:
           type: string
           format: date-time
@@ -380,12 +498,10 @@ components:
     UserItem:
       type: object
       required:
-        - id
         - username
         - password
-        - lastLogin
-        - createdAt
-        - updatedAt
+        - name
+        - email
       properties:
         id:
           type: string
@@ -397,10 +513,13 @@ components:
         password:
           type: string
           example: password123
-        lastLogin:
+        name:
           type: string
-          format: date-time
-          example: '2016-08-29T09:12:33.001Z'
+          example: John Doe
+        email:
+          type: string
+          format: email
+          example: hello@xyz.com
         createdAt:
           type: string
           format: date-time
