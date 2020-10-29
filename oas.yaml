@@ -396,6 +396,19 @@ paths:
                   example: a#923k9L3
 
         description: user details to log in
+        
+  /users/logout:
+    post:
+      summary: Logs out from accessing the protected resources
+      operationId: logout
+      description: Logs out of the system
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successfully logged out
+        '401':
+          description: Not authorized
       
 
 components:
