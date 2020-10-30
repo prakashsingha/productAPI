@@ -54,9 +54,10 @@ Please follow the following URL to get the full structure of the API.
 
 ## Running the server
 
-To run the server, run the following command:
+To run the server, run the following commands:
 
 ```
+npm install
 npm start
 
 ```
