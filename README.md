@@ -52,12 +52,16 @@ Please follow the following URL to get the full structure of the API.
   API_VERSION=v1
   ```
 
+- Install the dependencies
+  ```
+  npm install
+  ```
+
 ## Running the server
 
-To run the server, run the following commands:
+To run the server, run the following command:
 
 ```
-npm install
 npm start
 
 ```
